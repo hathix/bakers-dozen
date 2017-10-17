@@ -1,0 +1,15 @@
+On creating a level:
+	Supply the compressed version of the tiles. This is the format:
+		['background',[actors],[flags]]
+	Although you can omit the array around the [actors] if there's just one actor. You can omit [actors] or [flags] altogether.
+	Examples:
+		['g',new Obstacle()]
+		['g',[new Obstacle(), new Steppable()],['wet','watery']]
+	Regarding actors:
+		The things at the end of the list are put in front (top of the list) so they'll show up on top. Things at start of list on bottom.
+
+
+Writing abilities:
+	If you hijack a function, put custom code @ top and write:
+		self.super("funcName",arg1,arg2,arg3) where args are what you initially accepted and funcName is the function name
+	At the bottom.

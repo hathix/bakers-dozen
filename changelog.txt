@@ -1,0 +1,2 @@
+6/7		Added HP bars
+6/10	Got team/animal creation to work right; got save/load to work

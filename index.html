@@ -1,0 +1,771 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>	  <html class="no-js ie9 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Sprinkle Safari 2: The Baker's Dozen</title>
+  <meta name="description" content="hathix.com's second web adventure game, this time with more bad guys, more worlds to explore, and more cheesy jokes!">
+  <meta name="author" content="Neel Mehta, hathix.com">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <!--<link rel="stylesheet" href="css/bp-style.css">-->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/open-sans/stylesheet.css">
+    
+
+  <!-- end CSS-->
+
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+  	
+	<link rel="shortcut icon" type="image/ico" href="favicon.ico">
+	<!-- iOS will scan root directory, so no link needed; but Android needs it -->
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+	<link rel="canonical" href="http://bakersdozen.hathix.com">
+
+	<!-- IE9 pinning -->
+	<meta name="application-name" content="Baker's Dozen">
+	<meta name="msapplication-tooltip" content="A fun web-based adventure game">
+	<meta name="msapplication-starturl" content="http://bakersdozen.hathix.com">
+	<meta name="msapplication-window" content="width=1000;height=700">
+	<meta name="msapplication-navbutton-color" content="#EC77A4">
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  <!--<script src="js/libs/modernizr-2.0.6.min.js"></script>-->
+</head>
+
+<body>
+	
+	<div id="container">
+        <div class="navbar navbar-main"><!-- class="navbar-fixed-top" is worse than our custom one -->
+            <div class="navbar-inner">
+                <div class="container">
+    
+                    <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+                        <span class="icon-bar"></span> 
+                        <span class="icon-bar"></span> 
+                        <span class="icon-bar"></span> </a>
+    
+                    <!-- Be sure to leave the brand out there if you want it shown -->
+                    <a class="brand" href="#">
+                        <img src="images/icons/icon16.png">
+                        Baker's Dozen
+                        </a>
+    
+                    <!-- Everything you want hidden at 940px or less, place within here -->
+                    <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Tester Tools <b class="caret"></b> </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#" onclick="level.exit(0)">Skip level</a></li>
+                                <li><a href="#" onclick="character.levelUp()">Level up</a></li>
+                                <li><a href="#" onclick="world.addToInventory(prompt('Item Name'))">Get item</a></li>
+                                <li><a href="#" onclick='level.requestTile(level.getTileList(), "move-highlight", function(tile){ character.moveTo(tile); })'>Move</a></li>
+                                <li><a href="#" onclick="level.allies.forEach(function(x){ x._godMode(); })">God mode</a></li>                         
+                                <li><a href="#" onclick="world.chapter.returnToOverworld()">Overworld</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Items <b class="caret"></b> </a>
+                            <ul class="dropdown-menu" role="menu" id="items-list"></ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" id="ally-dropdown-target" class="dropdown-toggle" data-toggle="dropdown">
+                                Team <b class="caret"></b> </a>
+                            <ul class="dropdown-menu" role="menu" id="allies-list"></ul>                        
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Weather <b class="caret"></b> </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#" id="weather-indicator"><img src="images/weather/normal.png"><span>Normal</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                About <b class="caret"></b> </a>
+                            <div class="dropdown-menu" style="padding:0.5em;">
+                                Copyright &copy; hathix.com, 2012-13.
+                            </div>
+                        </li>
+                        
+                        <li><a href="#" id="team-builder-start">Team Builder</a></li>
+                        <li><a href="#" onclick="new MultiWorld().newGame();">Multiplayer</a></li>
+                    </ul>
+                   </div>
+                </div>
+            </div>
+        </div>	    
+	    
+		<!--<div id="loadingscreen" style="background-image: url(images/loading-bg.png);">-->
+			<!-- truly covers everything till main menu loaded -->
+		<!--</div>-->
+		
+		<div id="all-holder">
+    		<div id="all">
+    		    <div id="actors">
+    		        <!-- actors float on top of board here -->
+    		    </div>
+    			<table id="board">
+    				<!-- tiles go here -->
+    			</table>
+    		</div>
+		</div>
+		
+		<div class="overlay" id="team-builder">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container">
+        
+                        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+                            <span class="icon-bar"></span> 
+                            <span class="icon-bar"></span> 
+                            <span class="icon-bar"></span> </a>
+        
+                        <!-- Be sure to leave the brand out there if you want it shown -->
+                        <a class="brand" href="#">
+                            <img src="images/icons/icon16.png">
+                            Baker's Dozen Team Builder
+                            </a>
+        
+                        <!-- Everything you want hidden at 940px or less, place within here -->
+                        <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="dropdown">
+                                <a href="#">
+                                    Test</a>                        
+                            </li>
+                        </ul>
+                       </div>
+                    </div>
+                </div>
+            </div>  		    
+		    
+		    <div class="content">
+		        
+		        
+    		    <table class="table table-striped table-bordered" id="team-list-table">
+    		        <thead><tr>
+    		                <th>Name</th>
+    		                <th>Members</th>
+    		                <th></th>
+    		        </tr></thead>
+    
+                    <tr>
+                        <td class="team-name">Phillies</td>
+                        <td class="team-animals">
+                            <img src="images/animals/elephant.png" />
+                            <img src="images/animals/alligator.png" />
+                            <img src="images/animals/goat.png" />
+                            <img src="images/animals/bee.png" />
+                            <img src="images/animals/crab.png" />
+                        </td>
+                        <td class="team-buttons">
+                            <button class="btn btn-primary"><i class="icon-edit icon-white"></i> Edit</button>
+                            <button class="btn btn-danger"><i class="icon-remove icon-white"></i> Delete</button>
+                        </td>
+                    </tr>
+    		    </table>
+    		    
+                <fieldset>
+                    <legend>
+                        Add team
+                    </legend>
+                    <label>Team name</label>
+                    <input type="text" id="team-name" placeholder="Type something…">
+                    
+                    <table class="table table-striped table-bordered" id="add-team-table">
+                        <thead><tr>
+                            <th>Animal</th>
+                            <th>Name</th>
+                            <th>Skill Points</th>
+                            <th></th>
+                        </tr></thead>                     
+                    </table>
+                    
+                    <button class="btn btn-large btn-success" id="add-team-member">
+                        <i class="icon-plus icon-white"></i> Add animal</button>
+                    <button type="submit" class="btn btn-large btn-primary" id="create-team">
+                        <i class="icon-ok icon-white"></i>
+                        Create team
+                    </button>
+                </fieldset>
+  		    
+  		        <div class="clearfix"></div>
+  		    
+    		    
+		    </div>
+		</div>
+		
+		<div id="animal-choose-dialog" class="modal hide fade" role="dialog" aria-labelledby="animal-dialog-label" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="animal-dialog-label">Choose an animal</h3>
+                
+                <div id="animal-list"></div>
+                
+                <div class="animal-info">
+                    <h3 id="animal-type"></h3>
+    
+                    <table id="animal-stats" class="table table-condensed">
+                        <!-- TODO template this and put in teambuilder.js -->
+                  
+                        <tr id="stats-attack">
+                            <td><img src="images/interface/sword.png" /> Attack</td>
+                            <td class="stats-bar-row">
+                                <div class="progress">
+                                    <div class="hp-bar bar"></div>
+                                </div>
+                            </td>      
+                        </tr>
+                        <tr id="stats-defense">
+                            <td><img src="images/interface/shield.png" /> Defense</td>
+                            <td class="stats-bar-row">
+                                <div class="progress">
+                                    <div class="hp-bar bar"></div>
+                                </div>
+                            </td>      
+                        </tr>
+                        <tr id="stats-hp">
+                            <td><img src="images/interface/heart.png" /> HP</td>
+                            <td class="stats-bar-row">
+                                <div class="progress">
+                                    <div class="hp-bar bar"></div>
+                                </div>
+                            </td>          
+                        </tr>                          
+                        <tr id="stats-speed">
+                            <td><img src="images/interface/move.png" /> Speed</td>
+                            <td class="stats-bar-row">
+                                <div class="progress">
+                                    <div class="hp-bar bar"></div>
+                                </div>
+                            </td>          
+                        </tr>                                                           
+                    </table>
+                    
+                    <div class="animal-ability">
+                        Ability: <span id="animal-ability-name"></span>
+                        <span id="animal-ability-desc"></span>
+                    </div>
+                </div>	
+            </div>	    
+            <div class="modal-footer">
+                <button id="choose-animal" class="btn btn-primary" data-dismiss="modal"><i class="icon-ok icon-white"></i> Choose this animal</button>
+                <button class="btn" data-dismiss="modal">Cancel</button>
+            </div>
+		</div>
+		
+        <div id="assign-skills-dialog" class="modal hide fade" role="dialog" aria-labelledby="assign-dialog-label" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="assign-dialog-label"><span id="assign-dialog-char-name"></span>'s skills</h3>
+                
+                <p>You have <strong>50</strong> skill points to spend (max. 25 in each category.)</p>
+ 
+                    <table id="skill-assignments" class="table table-condensed">
+                        <tr>
+                            <td><img src="images/interface/sword.png" /> Attack</td>
+                            <td><input type="number" min="0" max="25" step="1" value="0" required id="skills-attack"></td>          
+                        </tr>                    
+                        <tr>
+                            <td><img src="images/interface/shield.png" /> Defense</td>
+                            <td><input type="number" min="0" max="25" step="1" value="0" required id="skills-defense"></td>          
+                        </tr>     
+                        <tr>
+                            <td><img src="images/interface/heart.png" /> HP</td>
+                            <td><input type="number" min="0" max="25" step="1" value="0" required id="skills-hp"></td>          
+                        </tr>     
+                        <tr>
+                            <td><img src="images/interface/move.png" /> Speed</td>
+                            <td><input type="number" min="0" max="25" step="1" value="0" required id="skills-speed"></td>          
+                        </tr>     
+                        <tr>
+                            <td><img src="images/interface/star.png" /> Ability</td>
+                            <td><input type="number" min="0" max="25" step="1" value="0" required id="skills-ability"></td>          
+                        </tr>                                                                                                                                       
+                    </table> 
+                
+                <p class="text-error"></p>                      
+            </div>   
+            <div class="modal-footer">
+                <button id="assign-skills-confirm" class="btn btn-primary"><i class="icon-white icon-check"></i> Save</button>
+                <button class="btn" data-dismiss="modal">Cancel</button>
+            </div>   
+        </div>		
+<!--
+        <div id="animal-view-dialog" class="modal hide fade" role="dialog" aria-labelledby="animal-view-label" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="assign-dialog-label"><span id="assign-dialog-char-name"></span>'s skills</h3>                
+            </div>
+            <div class="modal-body animal-info">
+                <h3 class="animal-type"></h3>
+
+                <table class="animal-stats" class="table table-condensed">
+              
+                    <tr id="stats-attack">
+                        <td><img src="images/interface/sword.png" /> Attack</td>
+                        <td class="stats-bar-row">
+                            <div class="progress">
+                                <div class="hp-bar bar"></div>
+                            </div>
+                        </td>      
+                    </tr>
+                    <tr id="stats-defense">
+                        <td><img src="images/interface/shield.png" /> Defense</td>
+                        <td class="stats-bar-row">
+                            <div class="progress">
+                                <div class="hp-bar bar"></div>
+                            </div>
+                        </td>      
+                    </tr>
+                    <tr id="stats-hp">
+                        <td><img src="images/interface/heart.png" /> HP</td>
+                        <td class="stats-bar-row">
+                            <div class="progress">
+                                <div class="hp-bar bar"></div>
+                            </div>
+                        </td>          
+                    </tr>                          
+                    <tr id="stats-speed">
+                        <td><img src="images/interface/move.png" /> Speed</td>
+                        <td class="stats-bar-row">
+                            <div class="progress">
+                                <div class="hp-bar bar"></div>
+                            </div>
+                        </td>          
+                    </tr>                                                           
+                </table>
+                
+                <div class="animal-ability">
+                    Ability: <span class="animal-ability-name"></span>
+                    <span class="animal-ability-desc"></span>
+                </div>
+            </div>
+        </div>-->
+
+		
+        <div id="item-dialog" class="modal hide fade" role="dialog" aria-labelledby="item-dialog-label" aria-hidden="true"  >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="item-dialog-label">You found an item!</h3>
+            </div>
+            <div class="modal-body">
+                You found a <span id="item-dialog-name"></span>! <img id="item-dialog-image" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div> 
+        
+        <!--<div id="action-dialog" class="modal hide fade" role="dialog" aria-labelledby="action-dialog-label" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="action-dialog-label"><span id="action-dialog-char-name"></span>'s Actions</h3>
+            </div>
+            <div class="modal-body">
+                <div id="action-buttons"></div>
+            </div>
+        </div>	-->
+        
+        <!-- for skill points -->
+        <div id="ally-dialog" class="modal hide fade" role="dialog" aria-labelledby="ally-dialog-label" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="ally-dialog-label"><span id="ally-dialog-char-name"></span>
+                    <small>/ <span id="ally-dialog-char-type"></span></small></h3>
+            </div>
+            <div class="modal-body">
+                <p>You have <strong id="ally-skill-points-count"></strong> skill point(s) to spend.</p>
+                
+                <div id="ally-skill-point-table">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>            
+        </div>
+	</div>
+	
+	<!-- info about animal -->
+    <div id="animal-dialog" class="modal hide fade" role="dialog" aria-labelledby="animal-dialog-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="animal-dialog-label"><span id="animal-dialog-char-name"></span>
+                <small>/ <span id="animal-dialog-char-type"></span></small></h3>
+        </div>
+        <div class="modal-body">
+            <div class="progress">
+                <div class="hp-bar bar"></div>
+            </div>
+
+            <!--<div class="progress">
+                <div class="exp-bar bar" style="width: 60%;"></div>
+            </div>-->
+            
+            <table class='stat-table'>
+                <tr>
+                    <td class="stat-level-cell">
+                        Level <strong> <span class="stat-level-text"></span> </strong>
+                    </td>
+                    <td class="stat-attack-cell" title="Attack">
+                        <img src="images/interface/sword.png" />
+                        <span class="stat-attack-text"></span>
+                    </td>
+                    <td class="stat-defense-cell" title="Defense">
+                        <img src='images/interface/shield.png' />
+                        <span class="stat-defense-text"></span>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="ability-holder">
+                <div class="ability-name"></div>
+                <div class="ability-description"></div>
+            </div>
+            
+            <div class="ally-only">
+                <!-- ally-only stuff here -->
+                <div id="action-buttons"></div>
+                
+                <br />
+                
+                <button class="btn btn-block btn-info" id="animal-skip-turn" data-dismiss="modal"><i class="icon-white icon-step-forward"></i> Skip turn</button>
+            </div>            
+            
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>            
+    </div>	
+    
+    <!-- choosing action -->
+    <div id="action-chooser-dialog" class="modal hide fade" role="dialog" aria-labelledby="action-chooser-label" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-header">
+            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
+            <h3 id="action-chooser-label"><span id="action-chooser-char-name"></span>'s actions</h3>
+        </div>
+        <div class="modal-body">
+            <div id="action-chooser-buttons" class="btn-group btn-group-vertical" style="width:100%">
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Don't attack (warning: ends turn)</button>
+        </div>      
+    </div>
+    
+        <div id="team-choose-dialog" class="modal hide fade" role="dialog" aria-labelledby="team-choose-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="team-choose-label">Choose teams</h3>
+        </div>
+        <div class="modal-body">
+            <p>Please choose 2-4 teams to play against each other.</p>
+            <div class="btn-group btn-group-vertical" data-toggle="buttons-checkbox" id="team-buttons-group" style="width: 100%;">
+                <button type="button" class="btn">
+                    <span class="team-choose-name"></span>
+                 </button>
+            </div>
+            
+            <p class="text-error"></p>     
+        </div>
+        <div class="modal-footer">
+            <button id="multiplayer-start" class="btn btn-primary" aria-hidden="true">Start playing</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>            
+    </div>
+	
+	<div id="useful" class="hidden">      
+        <div class="alert" id='alert'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <span id="alert-content"></span>
+        </div> 	    
+	</div>
+	
+    <div id="templates" class="hidden">
+        
+        <div id="hpbar-template" class="progress">
+            <div class="hp-bar bar bar-success" style="width: 100%"></div>
+        </div>
+        
+        <div id="dialogue-template">
+
+            <div class="dialogue media">            
+                <a class="pull-left" href="#">
+                    <img class="dialogue-image media-object" />
+                </a>
+                <div class="media-body">
+                    <h4 class="dialogue-speaker media-heading"></h4>
+                    <div class="dialogue-text media clearfix"></div>
+                </div>
+            </div>        
+        </div>
+        
+        <div id="popover-template">
+            <div class="progress">
+                <div class="hp-bar bar"></div>
+            </div>
+            <!--<div class="progress">
+                <div class="exp-bar bar" style="width: 60%;"></div>
+            </div>-->
+            
+            <table class='stat-table'>
+                <tr>
+                    <td class="stat-level-cell">
+                        Level <strong> <span class="stat-level-text"></span> </strong>
+                    </td>
+                    <td class="stat-attack-cell" title="Attack">
+                        <img src="images/interface/sword.png" />
+                        <span class="stat-attack-text"></span>
+                    </td>
+                    <td class="stat-defense-cell" title="Defense">
+                        <img src='images/interface/shield.png' />
+                        <span class="stat-defense-text"></span>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="ability-holder">
+                <div class="ability-name"></div>
+                <div class="ability-description"></div>
+            </div>
+        </div> 
+
+
+        <div id="tooltip-template" class="progress">
+            <div class="progress" style="width: 60px; margin: 0">
+                <div class="hp-bar bar"></div>
+            </div>
+        </div> 
+        
+        <div id="levelgroup-popover-template">
+            <span class="levelgroup-status"></span>
+        </div>
+            
+        <li id="item-display" class="item">
+            <a href="#">
+                <img class="item-image" />
+                <span class="item-desc"></span>
+            </a>
+        </li>        
+        <li id="ally-display">
+            <a href="#">
+                <img class="ally-image" />
+                <span class="ally-name"></span>
+                
+            <div class="progress">
+                <div class="hp-bar bar"></div>
+            </div>
+                          <!--  
+                <table class='stat-table'>
+                    <tr>
+                        <td class="stat-level-cell">
+                            Level <strong> <span class="stat-level-text"></span> </strong>
+                        </td>
+                        <td class="stat-attack-cell" title="Attack">
+                            <img src="images/interface/sword.png" />
+                            <span class="stat-attack-text"></span>
+                        </td>
+                        <td class="stat-defense-cell" title="Defense">
+                            <img src='images/interface/shield.png' />
+                            <span class="stat-defense-text"></span>
+                        </td>
+                    </tr>
+                </table> 
+                -->               
+            </a>
+        </li>
+        
+        <div id="skill-point-row" class="row-fluid">
+            <span class="span3">
+                <img class="skill-point-image" src="images/interface/sword.png" />&nbsp;
+                <span class="skill-point-desc">Attack</span>
+            </span>
+            <span class="span4">
+                <div class="progress">
+                    <div class="bar skill-point-bar"></div>
+                </div>
+            </span>
+            <span class="span2">
+                <span class="skill-points-spent"></span>/<span class="muted">25</span>
+            </span>
+            <span class="span3">
+                <button class="btn btn-small skill-point-spend" type="button">Upgrade</button>
+            </span>
+        </div>
+   
+        <button id="action-button-template" class="btn btn-large btn-block" data-dismiss="modal">
+            <span class="action-name"></span><br />
+            <span class="action-desc muted"></span><br />
+            <span class="action-uses-holder muted"><span class="action-uses"></span> use(s) left</span>
+        </button>
+        
+        <button id="team-button-template" type="button" class="btn btn-large btn-block">
+             <span class="team-choose-name"></span>
+        </button>
+        
+        <table>
+            <tr id="add-team-member-template">
+                <td class="animal-type">
+                    <img />
+                    <span class="animal-type-text"></span>
+                </td>
+                <td class="animal-name">
+                    <input type="text" class="animal-name-text-field" placeholder="Animal name">
+                </td>
+                <td class="animal-evs">Not assigned</td>
+                <td>
+                    <button class="btn animal-assign btn-primary">
+                        <i class="icon-edit icon-white"></i>
+                        Assign skill points
+                    </button>
+                    
+                    <button class="btn animal-delete btn-danger">
+                        <i class="icon-remove icon-white"></i>
+                        Delete
+                    </button>
+                    <!--<button class="btn animal-view">
+                        View stats
+                    </button>-->
+                </td>
+            </tr>
+            
+            <tr id="team-list-template">
+                <td class="team-name"></td>
+                <td class="team-animals"></td>
+                <td class="team-buttons">
+                    <button class="btn btn-primary team-edit"><i class="icon-edit icon-white"></i> Edit</button>
+                    <button class="btn btn-danger team-delete"><i class="icon-remove icon-white"></i> Delete</button>
+                </td>
+            </tr>
+        </table> 
+
+    </div>	
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <script src="js/libs/jquery-1.9.0-min.js"></script>
+
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/libs/bootstrap.min.js"></script>
+  <!--<script src="js/libs/jquery-ui-1.8.20.custom.min.js"></script>-->
+  <script src="js/plugins.js"></script>
+  <script src="js/libs/astar.js"></script>
+  <script src="js/libs/bootbox.min.js"></script>
+  <script src="js/libs/notification/jquery.noty.js"></script>
+  <script src="js/libs/notification/layouts/topRight.js"></script>
+  <script src="js/libs/notification/layouts/bottomCenter.js"></script>
+  <script src="js/libs/notification/layouts/topCenter.js"></script>
+  <script src="js/libs/notification/themes/default.js"></script>
+  <!--<script defer src="js/script.js"></script>-->
+
+
+    
+    <!-- standalone -->
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/constants.js"></script>
+    <script defer src="js/global.js"></script>
+    <script defer src="js/interface.js"></script>
+    <script defer src="js/main.js"></script>
+    <script defer src="js/flags.js"></script>
+    <script defer src="js/coords.js"></script>
+    <script defer src="js/action.js"></script>
+    <script defer src="js/ability.js"></script>
+    <script defer src="js/abilitydb.js"></script>
+    <script defer src="js/statdb.js"></script>
+    <script defer src="js/statchange.js"></script>
+    <script defer src="js/team.js"></script>
+    <script defer src="js/teamdb.js"></script>
+    
+    <script defer src="js/tile.js"></script>
+    <script defer src="js/dialogue.js"></script>
+    <script defer src="js/actor.js"></script>
+    <script defer src="js/obstacle.js"></script>
+    <script defer src="js/steppable.js"></script>
+    <script defer src="js/item.js"></script>
+    <script defer src="js/npc.js"></script>
+    <script defer src="js/animal.js"></script>
+    <script defer src="js/ally.js"></script>
+    <script defer src="js/enemy.js"></script>
+    <script defer src="js/weather.js"></script>
+    <script defer src="js/level.js"></script>
+    <script defer src="js/battlelevel.js"></script>
+    <script defer src="js/overworldlevel.js"></script>
+    <script defer src="js/levelgroup.js"></script>
+    <script defer src="js/chapter.js"></script>
+    <script defer src="js/world.js"></script>
+    <script defer src="js/turnmanager.js"></script>
+    
+    <script defer src="js/multi/multiworld.js"></script>
+    <script defer src="js/multi/multilevel.js"></script>
+    <script defer src="js/multi/__multilevels.js"></script>
+    
+   
+    <script defer src="js/teambuilder.js"></script>
+    <!--
+    <script defer src="js/.js"></script>
+    -->
+    
+    <script defer src="js/chapters/__chapterlist.js"></script>
+    <script defer src="js/chapters/chapter0.js"></script>
+  <!-- end scripts-->
+  
+		<!-- Start Piwik Tracking Tag -->
+		<script defer async type="text/javascript">
+			var pkBaseURL = (("https:" == document.location.protocol) ? "https://hathix.com/piwik/" : "http://hathix.com/piwik/");
+			document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+
+		</script>
+		<script type="text/javascript">
+			try {
+				var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+				piwikTracker.trackPageView();
+				piwikTracker.enableLinkTracking();
+			} catch( err ) {
+			}
+		</script>
+		<noscript>
+			<p><img src="http://hathix.com/piwik/piwik.php?idsite=1" style="border:0" alt="" />
+			</p>
+		</noscript>
+		<!-- End Piwik Tracking Tag -->  
+
+
+  <!-- Prompt IE 6/7 users to install Chrome Frame. Remove this if you want to support IE 6/7.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 8 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>

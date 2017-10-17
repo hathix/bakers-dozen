@@ -1,0 +1,52 @@
+Weather:
+	Sun: 			All attacks boosted
+	Rain:			All attacks weakened	
+	Snow:			Everyone slowed
+	Overcast:		
+	Storm:			Everyone takes damage every turn
+	Night:			
+	
+
+Nullifies Atk/Def EVs temp. (helps screw over overly-specialized people, increases versatility/reversal)
+No (positive) stat changes
+Reduces FoW revealing radius (i.e. harder to see.)
+All turn-lasting effects last longer (there's a percent of them gaining a turnLeft after each turn)
+All probabilities increased (in pushLuck) - so secondary effects more often, things more accurate
+2ndary effects happen more often (like increasing probs) - but it's discrim against people w/o special effect abilities
+Boosts stats of weaker animals (good for comebacks)
+Randomly adds fog to field?
+
+Terrain effects:
+	Sun: 			mud>dirt, ice>water-shallow, snow>dirt, swamp>grass?
+	Rain:			dirt>mud, path>mud, snow>water-shallow, sand>mud
+	Snow:			grass*>snow, water>ice, dirt>snow	
+	Overcast:		?
+	Storm:			?
+	Night:			?
+	
+	* means some will turn. ? means i'm considering it.
+
+
+TODO
+Add tag to affliction: selfInflicted. If so, weather that cancels afflictions won't do anything.
+
+
+
+Weather turns on and off every few turns (when there's NO weather, there's a random chance of a new weather starting)
+Animals have preferred weather. They all get tiny stat boost (+5%) in that weather.
+If you're in preferred weather, weather harm (all save sun) won't affect you
+
+
+FOG OF WAR
+Add to Team obj. They have [Coords] where there's fog
+When a team (human, not enemy) comes up, black out anything that is in the fog zone
+When person moves (even along path), defog anything within 2 spaces
+Add ability to defog large range
+Have some event fire each time animal steps (onStep)
+
+Allow bigger teams (to allow for more scouting)
+
+
+New battle mode; donut collector
+Animal gathers donuts as they walk over. When they die the donuts scatter
+Goal: control most donuts at end of 10/20 turns

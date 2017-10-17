@@ -1,0 +1,252 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Sprinkle Safari 2: The Baker's Dozen</title>
+  <meta name="description" content="hathix.com's second web adventure game, this time with more bad guys, more worlds to explore, and more cheesy jokes!">
+  <meta name="author" content="Neel Mehta, hathix.com">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/bp-style.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/open-sans/stylesheet.css">
+  <link rel="stylesheet" href="levelcreator/levelcreator.css">
+    
+
+  <!-- end CSS-->
+</head>
+
+<body>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+
+                <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span> </a>
+
+                <!-- Be sure to leave the brand out there if you want it shown -->
+                <a class="brand" href="#">
+                    <img src="images/icons/icon16.png">
+                    BD Level Creator
+                    </a>
+
+                <!-- Everything you want hidden at 940px or less, place within here -->
+                <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li><a href="#" id="set-dimensions">Set dimensions</a></li>
+                    <li><a href="#" id="set-background">Set background</a></li>
+                    <li><a href="#" id="set-all">Set all tiles</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Options <b class="caret"></b> </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a id="apply-hover" class="btn active" data-toggle="button">Apply on drag</a></li>
+                            <li><a id="actor-if-no-data" class="btn active" data-toggle="button">Actor: hide dialog if no data</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            OGet code <b class="caret"></b> </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a id="code-normal" class="btn active" data-toggle="button">Apply on drag</a></li>
+                            <li><a id="code-tiles" class="btn active" data-toggle="button">Tiles</a></li>
+                        </ul>
+                    </li>
+                </ul>
+               </div>
+            </div>
+        </div>
+    </div>
+ 
+    
+    
+    <div class="container-fluid" id="body-content">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <div id="sidebar-content">
+                    <ul class="nav nav-tabs">
+                        <li><a href="#meta-pane" data-toggle="tab" id="meta-tab">Meta</a></li>
+                        <li><a href="#tile-pane" data-toggle="tab" id="tiles-tab">Tiles</a></li>
+                        <li><a href="#actor-pane" data-toggle="tab" id="actors-tab">Actors</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="meta-pane">
+                            <form>
+                                <label for="meta-type">Type</label>
+                                <select id="meta-type">
+                                    <option>BattleLevel</option>
+                                    <option>TownLevel</option>
+                                </select>
+                                
+                                <label for="meta-code">Custom starting code (put BEFORE anything else)</label>
+                                <textarea id="meta-code" placeholder="Custom starting code" rows="10"></textarea>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="tile-pane">
+                            <div id="tile-menu"></div>
+                        </div>
+                        <div class="tab-pane" id="actor-pane">
+                            <h4>Obstacles</h4>
+                            <div id="obstacle-menu" class="actor-menu"></div>
+                            <h4>Steppables</h4>
+                            <div id="steppable-menu" class="actor-menu"></div>
+                            <h4>Items</h4>
+                            <div id="item-menu" class="actor-menu"></div>
+                            
+                            <p id="actor-help">Click on a tile to add the selected actor (click on an actor to edit it.) Alt+click an actor to delete it. Ctrl+click an actor to add another atop it.</p>
+                        </div>                                              
+                    </div>
+                </div>
+            </div>
+            <div class="span9" id="container">  
+                    <div id="all">  
+                        <div id="actors">
+                            <!-- actors float on top of board here -->
+                        </div>
+                        <table id="board">
+                            <!-- tiles go here -->
+                        </table>
+                    </div>
+            </div>
+   
+        </div>
+    </div>
+ 
+    <div id="dimensions-dialog" class="modal hide fade" role="dialog" aria-labelledby="dimensions-dialog-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="dimensions-dialog-label">Set dimensions</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="input-rows">Rows</label>
+                    <div class="controls">
+                        <input id="input-rows" type="number" required>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">Columns</label>
+                    <div class="controls">
+                        <input id="input-cols" type="number" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="dimensions-done" data-dismiss="modal" aria-hidden="true">Done</button>
+        </div>
+    </div>
+    
+    <div id="actor-dialog" class="modal hide fade" role="dialog" aria-labelledby="actor-dialog-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="actor-dialog-label">Details</h3>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div id="if-actor-data">
+                    <label for="actor-data">Data: <em id="actor-data-help"></em></label>
+                    <textarea id="actor-data"></textarea>
+                </div>
+                
+                
+                <label for="actor-var">Variable name (use this to refer to it later)</label>
+                <input type="text" id="actor-var" />
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="actor-done" data-dismiss="modal">Done (or hit Esc)</button>
+        </div>        
+    </div>
+    
+    <div id="templates" class="hidden">
+          
+        <div id="tile-template" class="span3 tile-menu-cell">
+            <img src="images/tiles/grass.png" />
+        </div>  
+    </div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <script src="js/libs/jquery-1.9.0-min.js"></script>
+  <script src="levelcreator/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>
+
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/libs/bootstrap.min.js"></script>
+  <!--<script src="js/libs/jquery-ui-1.8.20.custom.min.js"></script>-->
+  <script src="js/plugins.js"></script>
+  <script src="js/libs/astar.js"></script>
+  <script src="js/libs/bootbox.min.js"></script>
+  <!--<script defer src="js/script.js"></script>-->
+    
+    <!-- standalone -->
+    
+    <script defer>
+        Cobra.install();
+    </script>
+    
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/constants.js"></script>
+    <script defer src="js/global.js"></script>
+    <script defer src="js/interface.js"></script>
+    <script defer src="js/flags.js"></script>
+    <script defer src="js/coords.js"></script>
+    <script defer src="js/action.js"></script>
+    <script defer src="js/ability.js"></script>
+    <script defer src="js/abilitydb.js"></script>
+    <script defer src="js/statdb.js"></script>
+    <script defer src="js/statchange.js"></script>
+    
+    <script defer src="js/tile.js"></script>
+    <script defer src="js/dialogue.js"></script>
+    <script defer src="js/actor.js"></script>
+    <script defer src="js/obstacle.js"></script>
+    <script defer src="js/steppable.js"></script>
+    <script defer src="js/item.js"></script>
+    <script defer src="js/npc.js"></script>
+    <script defer src="js/animal.js"></script>
+    <script defer src="js/ally.js"></script>
+    <script defer src="js/enemy.js"></script>
+    <script defer src="js/level.js"></script>
+    <script defer src="js/battlelevel.js"></script>
+    <script defer src="js/overworldlevel.js"></script>
+    <script defer src="js/levelgroup.js"></script>
+    <script defer src="js/chapter.js"></script>
+    <script defer src="js/world.js"></script>
+    
+    
+   <script defer src="levelcreator/levelcreator.js"></script>
+    <script defer src="levelcreator/tileset.js"></script>
+    <script defer src="levelcreator/tiles.js"></script>
+    <script defer src="levelcreator/actors.js"></script>
+    
+    
+    <!--
+    <script defer src="js/.js"></script>
+    -->
+</body>
+</html>
